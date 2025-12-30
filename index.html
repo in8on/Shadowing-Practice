@@ -2,192 +2,852 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Shadowing Master Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadowing Master Pro - تمارين الشادونق</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-        body { font-family: 'Cairo', sans-serif; background-color: #f3f4f6; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-        .player-box { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 1.5rem; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        .player-box iframe { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
-        .loading-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; color: white; z-index: 10; display: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Cairo:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #0ea5e9;
+            --accent: #10b981;
+            --destructive: #ef4444;
+            --background: #0f172a;
+            --foreground: #f1f5f9;
+            --card: #1e293b;
+            --muted: #64748b;
+            --border: #334155;
+        }
+
+        body {
+            font-family: 'Cairo', 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            color: var(--foreground);
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 24px;
+        }
+
+        .glass-strong {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 24px;
+        }
+
+        .glow-cyan {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.2), 0 0 60px rgba(6, 182, 212, 0.1);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideInDown 0.7s ease-out;
+        }
+
+        header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        header p {
+            font-size: 14px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .main-card {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 40px;
+            padding: 32px;
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.2);
+            animation: slideInUp 0.7s ease-out 0.15s both;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            background: rgba(30, 41, 59, 0.7);
+            color: var(--foreground);
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Cairo', 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        button:hover {
+            background: rgba(6, 182, 212, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 32px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            font-size: 18px;
+        }
+
+        .sentence-display {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .sentence-display.hidden {
+            opacity: 0.3;
+            filter: blur(5px);
+        }
+
+        .sentence-text {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .sentence-translation {
+            font-size: 14px;
+            color: var(--muted);
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .action-buttons button {
+            padding: 14px;
+            font-size: 16px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .action-buttons button:first-child {
+            grid-column: 1 / -1;
+        }
+
+        .library-button {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border-radius: 20px;
+            margin-top: 12px;
+            border-top: 1px solid rgba(148, 163, 184, 0.2);
+            padding-top: 20px;
+        }
+
+        .stats-button {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border-radius: 20px;
+            margin-top: 12px;
+        }
+
+        .library-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            border-left: 1px solid rgba(148, 163, 184, 0.2);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 1000;
+            padding: 24px;
+        }
+
+        .library-panel.open {
+            right: 0;
+        }
+
+        .library-panel h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .library-item {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .library-item:hover {
+            background: rgba(6, 182, 212, 0.2);
+            border-color: var(--primary);
+        }
+
+        .library-item-text {
+            font-size: 14px;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .library-item-level {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .close-library {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border: none;
+            color: var(--foreground);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.visible {
+            display: block;
+        }
+
+        .stats-page {
+            display: none;
+        }
+
+        .stats-page.visible {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 24px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(148, 163, 184, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            color: var(--muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+
+            header h1 {
+                font-size: 32px;
+            }
+
+            .main-card {
+                padding: 20px;
+                border-radius: 24px;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .library-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
     </style>
 </head>
-<body class="p-4 md:p-8 flex flex-col items-center">
+<body>
+    <!-- Home Page -->
+    <div id="homePage" class="home-page visible">
+        <div class="container">
+            <header>
+                <h1>
+                    <span>✨</span>
+                    Shadowing Master
+                    <span>✨</span>
+                </h1>
+                <p>تدرب على النطق مع مقاطع يوتيوب الحقيقية</p>
+            </header>
 
-    <div class="w-full max-w-md bg-white rounded-[2rem] shadow-xl p-6 border border-gray-100">
-        <!-- Header -->
-        <div class="text-center mb-6">
-            <h1 class="text-2xl font-black text-indigo-900">Shadowing Pro 🎙️</h1>
-            <p class="text-gray-500 text-xs mt-1">نسخة مطورة ومستقرة</p>
-        </div>
+            <div class="main-card">
+                <!-- Controls -->
+                <div class="controls">
+                    <div class="control-group">
+                        <label>المستوى</label>
+                        <div class="button-group">
+                            <button class="level-btn active" data-level="Beginner">مبتدئ</button>
+                            <button class="level-btn" data-level="Intermediate">متوسط</button>
+                            <button class="level-btn" data-level="Advanced">صعب</button>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>السرعة</label>
+                        <div class="button-group">
+                            <button class="speed-btn" data-speed="0.75">0.75x</button>
+                            <button class="speed-btn active" data-speed="1">1x</button>
+                            <button class="speed-btn" data-speed="1.25">1.25x</button>
+                            <button class="speed-btn" data-speed="1.5">1.5x</button>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Controls -->
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <div>
-                <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-2">المستوى</label>
-                <select id="lvl" onchange="loadNew()" class="w-full bg-gray-50 border-none rounded-xl p-3 text-sm font-bold text-gray-700 ring-1 ring-gray-200">
-                    <option value="Beginner">مبتدئ</option>
-                    <option value="Intermediate" selected>متوسط</option>
-                    <option value="Advanced">متقدم</option>
-                </select>
+                <!-- Video Player -->
+                <div class="video-container">
+                    <div id="videoPlayer" class="video-placeholder">
+                        اختر جملة للبدء
+                    </div>
+                </div>
+
+                <!-- Sentence Display -->
+                <div class="sentence-display hidden" id="sentenceDisplay">
+                    <div class="sentence-text" id="sentenceText">-</div>
+                    <div class="sentence-translation" id="sentenceTranslation">-</div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button id="newSentenceBtn" style="grid-column: 1 / -1; background: linear-gradient(135deg, #0ea5e9, #06b6d4); border-color: #0ea5e9; color: white;">
+                        📝 جملة عشوائية جديدة
+                    </button>
+                    <button id="replayBtn">🔄 إعادة تشغيل</button>
+                    <button id="toggleTextBtn">👁️ إظهار/إخفاء النص</button>
+                    <button id="saveBtn">❤️ حفظ</button>
+                </div>
+
+                <!-- Library and Stats Buttons -->
+                <button class="library-button" id="libraryBtn">
+                    📚 مكتبتي (<span id="savedCount">0</span>)
+                </button>
+                <button class="stats-button" id="statsBtn">
+                    📊 الإحصائيات والتقدم
+                </button>
             </div>
-            <div>
-                <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-2">السرعة</label>
-                <select id="spd" onchange="updateSpd()" class="w-full bg-gray-50 border-none rounded-xl p-3 text-sm font-bold text-gray-700 ring-1 ring-gray-200">
-                    <option value="0.5">0.5x</option>
-                    <option value="0.75">0.75x</option>
-                    <option value="1" selected>طبيعي</option>
-                </select>
+
+            <div class="footer">
+                Powered by YouTube • Liquid Glass Design
             </div>
         </div>
+    </div>
 
-        <!-- Player Area -->
-        <div class="player-box mb-6">
-            <div id="loader" class="loading-overlay">جاري التحميل...</div>
-            <div id="player"></div>
-        </div>
+    <!-- Stats Page -->
+    <div id="statsPage" class="stats-page">
+        <div class="container">
+            <header>
+                <button id="backBtn" style="width: 100%; margin-bottom: 20px;">← العودة للرئيسية</button>
+                <h1>📊 إحصائيات التدريب</h1>
+                <p>تتبع تقدمك في تمارين الشادونق</p>
+            </header>
 
-        <!-- Text Display -->
-        <div id="textArea" class="hidden bg-indigo-50 border-r-4 border-indigo-600 p-4 rounded-xl mb-6 animate-pulse">
-            <p id="phrase" class="text-lg font-bold text-indigo-900 leading-relaxed italic"></p>
-        </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalSavedStat">0</div>
+                    <div class="stat-label">إجمالي الجمل</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="mostPracticedStat">-</div>
+                    <div class="stat-label">المستوى الأكثر</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="achievementStat">🌱</div>
+                    <div class="stat-label">الإنجاز</div>
+                </div>
+            </div>
 
-        <!-- Main Actions -->
-        <div class="space-y-3">
-            <button id="nextBtn" onclick="loadNew()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl text-xl transition active:scale-95 shadow-lg flex items-center justify-center gap-2">
-                جملة عشوائية جديدة ❯
-            </button>
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="replay()" class="bg-emerald-500 text-white font-bold py-3 rounded-xl active:scale-95 transition">إعادة 🔁</button>
-                <button id="viewBtn" onclick="toggle()" class="bg-gray-800 text-white font-bold py-3 rounded-xl active:scale-95 transition">النص 📝</button>
+            <div class="main-card">
+                <h2 style="margin-bottom: 20px;">📈 توزيع المستويات</h2>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>مبتدئ</span>
+                        <span id="beginnerCount">0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="beginnerBar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>متوسط</span>
+                        <span id="intermediateCount">0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="intermediateBar" style="width: 0%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>صعب</span>
+                        <span id="advancedCount">0</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="advancedBar" style="width: 0%; background: linear-gradient(90deg, #ef4444, #f87171);"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                تتبع تقدمك وحقق أهدافك
             </div>
         </div>
+    </div>
 
-        <p id="msg" class="text-center text-[10px] text-gray-400 mt-6 uppercase tracking-widest font-mono">System Ready</p>
+    <!-- Library Panel -->
+    <div class="overlay" id="overlay"></div>
+    <div class="library-panel" id="libraryPanel">
+        <button class="close-library" id="closeLibraryBtn">✕</button>
+        <h2>📚 مكتبتي</h2>
+        <div id="libraryList"></div>
     </div>
 
     <script>
-        // قاعدة بيانات محدثة بروابط TED و BBC مستقرة جداً
-        const data = [
-            { id: '8S0FDjFBj8o', s: 45, e: 49, lvl: 'Intermediate', txt: "We need to rethink the way we build our cities for the future." },
-            { id: 'h79pgvz9L6Y', s: 10, e: 13, lvl: 'Beginner', txt: "It's a pleasure to meet you and welcome to our city." },
-            { id: 'L-670_mTH3U', s: 45, e: 50, lvl: 'Intermediate', txt: "Don't forget to practice your pronunciation every single day." },
-            { id: 'W6OaH-G92S4', s: 50, e: 56, lvl: 'Advanced', txt: "The architectural significance of this building cannot be overstated." },
-            { id: 'LXb3EKWsInQ', s: 30, e: 35, lvl: 'Advanced', txt: "The geopolitical situation is becoming increasingly volatile." },
-            { id: '7H8S3vSshS4', s: 21, e: 25, lvl: 'Beginner', txt: "I want to share a simple idea with all of you today." },
-            { id: '8S0FDjFBj8o', s: 212, e: 217, lvl: 'Advanced', txt: "This is a fundamental shift in how we perceive global economy." }
+        // Data
+        const sentences = [
+            { id: '1', text: 'Hello, how are you today?', textAr: 'مرحبا، كيف حالك اليوم؟', videoId: 'dQw4w9WgXcQ', startTime: 0, endTime: 5, level: 'Beginner' },
+            { id: '2', text: 'I would like to learn English', textAr: 'أود أن أتعلم اللغة الإنجليزية', videoId: 'dQw4w9WgXcQ', startTime: 5, endTime: 10, level: 'Intermediate' },
+            { id: '3', text: 'The quick brown fox jumps over the lazy dog', textAr: 'الثعلب البني السريع يقفز فوق الكلب الكسول', videoId: 'dQw4w9WgXcQ', startTime: 10, endTime: 15, level: 'Advanced' },
+            { id: '4', text: 'Practice makes perfect', textAr: 'الممارسة تصنع الكمال', videoId: 'dQw4w9WgXcQ', startTime: 15, endTime: 20, level: 'Beginner' },
+            { id: '5', text: 'I am very interested in this topic', textAr: 'أنا مهتم جداً بهذا الموضوع', videoId: 'dQw4w9WgXcQ', startTime: 20, endTime: 25, level: 'Intermediate' },
         ];
 
-        let player, cur, timer, isReady = false;
+        const levelLabels = {
+            'Beginner': 'مبتدئ',
+            'Intermediate': 'متوسط',
+            'Advanced': 'صعب'
+        };
 
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                playerVars: { 
-                    'autoplay': 0, 
-                    'controls': 0, 
-                    'modestbranding': 1, 
-                    'rel': 0, 
-                    'playsinline': 1,
-                    'enablejsapi': 1
-                },
-                events: { 
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange,
-                    'onError': () => { console.log("Error loading, skipping..."); loadNew(); }
-                }
-            });
-        }
+        // State
+        let currentLevel = 'Beginner';
+        let currentSpeed = 1;
+        let currentSentence = null;
+        let isTextVisible = false;
+        let savedSentences = [];
 
-        function onPlayerReady() {
-            isReady = true;
-            loadNew();
-        }
-
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.PLAYING) {
-                document.getElementById('loader').style.display = 'none';
-                startWatch();
-            } else {
-                stopWatch();
+        // Load saved sentences from localStorage
+        function loadSavedSentences() {
+            const saved = localStorage.getItem('savedSentences');
+            if (saved) {
+                savedSentences = JSON.parse(saved);
+                updateSavedCount();
             }
         }
 
-        function loadNew() {
-            if (!isReady) return;
-            
-            stopWatch();
-            const lvl = document.getElementById('lvl').value;
-            const filtered = data.filter(i => i.lvl === lvl);
-            
-            // تجنب اختيار نفس الجملة مرتين
-            let next;
+        function saveSentencesToStorage() {
+            localStorage.setItem('savedSentences', JSON.stringify(savedSentences));
+            updateSavedCount();
+        }
+
+        function updateSavedCount() {
+            document.getElementById('savedCount').textContent = savedSentences.length;
+        }
+
+        function isSaved(id) {
+            return savedSentences.some(s => s.id === id);
+        }
+
+        function saveSentence(sentence) {
+            if (!isSaved(sentence.id)) {
+                savedSentences.push(sentence);
+                saveSentencesToStorage();
+            }
+        }
+
+        function removeSentence(id) {
+            savedSentences = savedSentences.filter(s => s.id !== id);
+            saveSentencesToStorage();
+        }
+
+        // Load random sentence
+        function loadRandomSentence() {
+            const filtered = sentences.filter(s => s.level === currentLevel);
+            if (filtered.length === 0) return;
+
+            let newSentence;
             do {
-                next = filtered[Math.floor(Math.random() * filtered.length)];
-            } while (filtered.length > 1 && cur && next.id === cur.id && next.s === cur.s);
+                newSentence = filtered[Math.floor(Math.random() * filtered.length)];
+            } while (filtered.length > 1 && currentSentence && newSentence.id === currentSentence.id);
+
+            currentSentence = newSentence;
+            isTextVisible = false;
+            updateDisplay();
+            loadVideo();
+        }
+
+        function updateDisplay() {
+            if (!currentSentence) return;
+
+            document.getElementById('sentenceText').textContent = currentSentence.text;
+            document.getElementById('sentenceTranslation').textContent = currentSentence.textAr;
             
-            cur = next;
-
-            // تحديث الواجهة
-            document.getElementById('textArea').classList.add('hidden');
-            document.getElementById('textArea').classList.remove('animate-pulse');
-            document.getElementById('viewBtn').innerText = "إظهار النص 📝";
-            document.getElementById('phrase').innerText = cur.txt;
-            document.getElementById('loader').style.display = 'flex';
-            document.getElementById('msg').innerText = "Loading Video...";
-
-            player.loadVideoById({
-                videoId: cur.id,
-                startSeconds: cur.s
-            });
-            
-            updateSpd();
-        }
-
-        function startWatch() {
-            stopWatch();
-            document.getElementById('msg').innerText = "Playing & Monitoring...";
-            timer = setInterval(() => {
-                if (player && player.getCurrentTime) {
-                    const now = player.getCurrentTime();
-                    if (now >= cur.e || now < cur.s - 1) {
-                        player.pauseVideo();
-                        stopWatch();
-                        document.getElementById('msg').innerText = "Paused at End Point";
-                    }
-                }
-            }, 50); // فحص سريع جداً لضمان الدقة
-        }
-
-        function stopWatch() {
-            if (timer) clearInterval(timer);
-        }
-
-        function replay() {
-            if (!cur) return;
-            document.getElementById('loader').style.display = 'flex';
-            player.seekTo(cur.s);
-            player.playVideo();
-        }
-
-        function updateSpd() {
-            const s = parseFloat(document.getElementById('spd').value);
-            if (player && player.setPlaybackRate) player.setPlaybackRate(s);
-        }
-
-        function toggle() {
-            const t = document.getElementById('textArea');
-            const b = document.getElementById('viewBtn');
-            if (t.classList.contains('hidden')) {
-                t.classList.remove('hidden');
-                t.classList.add('animate-pulse');
-                b.innerText = "إخفاء النص 👁️";
+            const display = document.getElementById('sentenceDisplay');
+            if (isTextVisible) {
+                display.classList.remove('hidden');
             } else {
-                t.classList.add('hidden');
-                b.innerText = "إظهار النص 📝";
+                display.classList.add('hidden');
+            }
+
+            const saveBtn = document.getElementById('saveBtn');
+            if (isSaved(currentSentence.id)) {
+                saveBtn.style.background = 'rgba(239, 68, 68, 0.2)';
+                saveBtn.style.borderColor = '#ef4444';
+                saveBtn.style.color = '#fca5a5';
+            } else {
+                saveBtn.style.background = 'rgba(30, 41, 59, 0.7)';
+                saveBtn.style.borderColor = 'rgba(148, 163, 184, 0.3)';
+                saveBtn.style.color = 'var(--foreground)';
             }
         }
+
+        function loadVideo() {
+            if (!currentSentence) return;
+
+            const videoPlayer = document.getElementById('videoPlayer');
+            const url = `https://www.youtube.com/embed/${currentSentence.videoId}?start=${currentSentence.startTime}&end=${currentSentence.endTime}&autoplay=1&controls=1&modestbranding=1&rel=0`;
+            
+            videoPlayer.innerHTML = `<iframe src="${url}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        }
+
+        function updateLibraryPanel() {
+            const list = document.getElementById('libraryList');
+            if (savedSentences.length === 0) {
+                list.innerHTML = '<p style="color: var(--muted); text-align: center; padding: 20px;">لم تقم بحفظ أي جمل بعد</p>';
+                return;
+            }
+
+            list.innerHTML = savedSentences.map(s => `
+                <div class="library-item" onclick="selectFromLibrary('${s.id}')">
+                    <div class="library-item-text">${s.text}</div>
+                    <div class="library-item-level">${levelLabels[s.level]} • ${s.textAr}</div>
+                    <button onclick="event.stopPropagation(); removeSentence('${s.id}'); updateLibraryPanel();" style="margin-top: 8px; width: 100%; background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5;">حذف</button>
+                </div>
+            `).join('');
+        }
+
+        function selectFromLibrary(id) {
+            const sentence = savedSentences.find(s => s.id === id);
+            if (sentence) {
+                currentSentence = sentence;
+                currentLevel = sentence.level;
+                updateLevelButtons();
+                isTextVisible = false;
+                updateDisplay();
+                loadVideo();
+                closeLibrary();
+            }
+        }
+
+        function updateLevelButtons() {
+            document.querySelectorAll('.level-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.level === currentLevel) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function updateStats() {
+            const total = savedSentences.length;
+            const beginnerCount = savedSentences.filter(s => s.level === 'Beginner').length;
+            const intermediateCount = savedSentences.filter(s => s.level === 'Intermediate').length;
+            const advancedCount = savedSentences.filter(s => s.level === 'Advanced').length;
+            const maxCount = Math.max(beginnerCount, intermediateCount, advancedCount, 1);
+
+            document.getElementById('totalSavedStat').textContent = total;
+            document.getElementById('beginnerCount').textContent = beginnerCount;
+            document.getElementById('intermediateCount').textContent = intermediateCount;
+            document.getElementById('advancedCount').textContent = advancedCount;
+
+            document.getElementById('beginnerBar').style.width = (beginnerCount / maxCount * 100) + '%';
+            document.getElementById('intermediateBar').style.width = (intermediateCount / maxCount * 100) + '%';
+            document.getElementById('advancedBar').style.width = (advancedCount / maxCount * 100) + '%';
+
+            const mostPracticed = total > 0 ? levelLabels[['Beginner', 'Intermediate', 'Advanced'].sort((a, b) => {
+                const countA = [beginnerCount, intermediateCount, advancedCount][['Beginner', 'Intermediate', 'Advanced'].indexOf(a)];
+                const countB = [beginnerCount, intermediateCount, advancedCount][['Beginner', 'Intermediate', 'Advanced'].indexOf(b)];
+                return countB - countA;
+            })[0]] : '-';
+
+            document.getElementById('mostPracticedStat').textContent = mostPracticed;
+
+            let achievement = '🌱';
+            if (total >= 20) achievement = '🎉';
+            else if (total >= 10) achievement = '🏆';
+            else if (total >= 5) achievement = '⭐';
+
+            document.getElementById('achievementStat').textContent = achievement;
+        }
+
+        function openLibrary() {
+            document.getElementById('libraryPanel').classList.add('open');
+            document.getElementById('overlay').classList.add('visible');
+            updateLibraryPanel();
+        }
+
+        function closeLibrary() {
+            document.getElementById('libraryPanel').classList.remove('open');
+            document.getElementById('overlay').classList.remove('visible');
+        }
+
+        function showStats() {
+            document.getElementById('homePage').classList.remove('visible');
+            document.getElementById('statsPage').classList.add('visible');
+            updateStats();
+        }
+
+        function showHome() {
+            document.getElementById('statsPage').classList.remove('visible');
+            document.getElementById('homePage').classList.add('visible');
+        }
+
+        // Event listeners
+        document.getElementById('newSentenceBtn').addEventListener('click', loadRandomSentence);
+        document.getElementById('replayBtn').addEventListener('click', () => loadVideo());
+        document.getElementById('toggleTextBtn').addEventListener('click', () => {
+            isTextVisible = !isTextVisible;
+            updateDisplay();
+        });
+        document.getElementById('saveBtn').addEventListener('click', () => {
+            if (currentSentence) {
+                if (isSaved(currentSentence.id)) {
+                    removeSentence(currentSentence.id);
+                } else {
+                    saveSentence(currentSentence);
+                }
+                updateDisplay();
+            }
+        });
+
+        document.getElementById('libraryBtn').addEventListener('click', openLibrary);
+        document.getElementById('closeLibraryBtn').addEventListener('click', closeLibrary);
+        document.getElementById('overlay').addEventListener('click', closeLibrary);
+        document.getElementById('statsBtn').addEventListener('click', showStats);
+        document.getElementById('backBtn').addEventListener('click', showHome);
+
+        document.querySelectorAll('.level-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentLevel = btn.dataset.level;
+                updateLevelButtons();
+            });
+        });
+
+        document.querySelectorAll('.speed-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentSpeed = parseFloat(btn.dataset.speed);
+            });
+        });
+
+        // Initialize
+        loadSavedSentences();
+        updateSavedCount();
     </script>
 </body>
 </html>
