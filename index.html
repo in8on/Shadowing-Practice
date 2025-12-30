@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Shadowing Master</title>
+    <title>Shadowing Master Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-        body { font-family: 'Cairo', sans-serif; background-color: #f3f4f6; overflow-x: hidden; }
-        .player-box { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 1.5rem; overflow: hidden; }
+        body { font-family: 'Cairo', sans-serif; background-color: #f3f4f6; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        .player-box { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 1.5rem; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         .player-box iframe { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events: none; }
-        .btn-active { background-color: #4f46e5 !important; color: white !important; }
+        .loading-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; color: white; z-index: 10; display: none; }
     </style>
 </head>
 <body class="p-4 md:p-8 flex flex-col items-center">
@@ -20,37 +20,44 @@
         <!-- Header -->
         <div class="text-center mb-6">
             <h1 class="text-2xl font-black text-indigo-900">Shadowing Pro 🎙️</h1>
-            <p class="text-gray-500 text-xs mt-1">تدرب على المحاكاة بضغطة زر</p>
+            <p class="text-gray-500 text-xs mt-1">نسخة مطورة ومستقرة</p>
         </div>
 
         <!-- Controls -->
         <div class="grid grid-cols-2 gap-3 mb-6">
-            <select id="lvl" onchange="loadNew()" class="bg-gray-50 border-none rounded-xl p-3 text-sm font-bold text-gray-700 ring-1 ring-gray-200">
-                <option value="Beginner">مبتدئ</option>
-                <option value="Intermediate" selected>متوسط</option>
-                <option value="Advanced">متقدم</option>
-            </select>
-            <select id="spd" onchange="updateSpd()" class="bg-gray-50 border-none rounded-xl p-3 text-sm font-bold text-gray-700 ring-1 ring-gray-200">
-                <option value="0.5">0.5x (بطيء)</option>
-                <option value="0.75">0.75x</option>
-                <option value="1" selected>طبيعي</option>
-            </select>
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-2">المستوى</label>
+                <select id="lvl" onchange="loadNew()" class="w-full bg-gray-50 border-none rounded-xl p-3 text-sm font-bold text-gray-700 ring-1 ring-gray-200">
+                    <option value="Beginner">مبتدئ</option>
+                    <option value="Intermediate" selected>متوسط</option>
+                    <option value="Advanced">متقدم</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-gray-400 mb-1 mr-2">السرعة</label>
+                <select id="spd" onchange="updateSpd()" class="w-full bg-gray-50 border-none rounded-xl p-3 text-sm font-bold text-gray-700 ring-1 ring-gray-200">
+                    <option value="0.5">0.5x</option>
+                    <option value="0.75">0.75x</option>
+                    <option value="1" selected>طبيعي</option>
+                </select>
+            </div>
         </div>
 
-        <!-- Player -->
-        <div class="player-box shadow-lg mb-6">
+        <!-- Player Area -->
+        <div class="player-box mb-6">
+            <div id="loader" class="loading-overlay">جاري التحميل...</div>
             <div id="player"></div>
         </div>
 
-        <!-- Text -->
-        <div id="textArea" class="hidden bg-indigo-50 border-r-4 border-indigo-600 p-4 rounded-xl mb-6">
+        <!-- Text Display -->
+        <div id="textArea" class="hidden bg-indigo-50 border-r-4 border-indigo-600 p-4 rounded-xl mb-6 animate-pulse">
             <p id="phrase" class="text-lg font-bold text-indigo-900 leading-relaxed italic"></p>
         </div>
 
-        <!-- Buttons -->
+        <!-- Main Actions -->
         <div class="space-y-3">
-            <button onclick="loadNew()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl text-xl transition active:scale-95 shadow-lg flex items-center justify-center gap-2">
-                جملة عشوائية ❯
+            <button id="nextBtn" onclick="loadNew()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl text-xl transition active:scale-95 shadow-lg flex items-center justify-center gap-2">
+                جملة عشوائية جديدة ❯
             </button>
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="replay()" class="bg-emerald-500 text-white font-bold py-3 rounded-xl active:scale-95 transition">إعادة 🔁</button>
@@ -58,56 +65,110 @@
             </div>
         </div>
 
-        <p id="msg" class="text-center text-[10px] text-gray-300 mt-6 uppercase tracking-widest">System Ready</p>
+        <p id="msg" class="text-center text-[10px] text-gray-400 mt-6 uppercase tracking-widest font-mono">System Ready</p>
     </div>
 
     <script>
+        // قاعدة بيانات محدثة بروابط TED و BBC مستقرة جداً
         const data = [
-            { id: 'h79pgvz9L6Y', s: 10, e: 13, lvl: 'Beginner', txt: "It's a pleasure to meet you and welcome to our city." },
             { id: '8S0FDjFBj8o', s: 45, e: 49, lvl: 'Intermediate', txt: "We need to rethink the way we build our cities for the future." },
+            { id: 'h79pgvz9L6Y', s: 10, e: 13, lvl: 'Beginner', txt: "It's a pleasure to meet you and welcome to our city." },
             { id: 'L-670_mTH3U', s: 45, e: 50, lvl: 'Intermediate', txt: "Don't forget to practice your pronunciation every single day." },
             { id: 'W6OaH-G92S4', s: 50, e: 56, lvl: 'Advanced', txt: "The architectural significance of this building cannot be overstated." },
-            { id: 'LXb3EKWsInQ', s: 30, e: 35, lvl: 'Advanced', txt: "The geopolitical situation is becoming increasingly volatile." }
+            { id: 'LXb3EKWsInQ', s: 30, e: 35, lvl: 'Advanced', txt: "The geopolitical situation is becoming increasingly volatile." },
+            { id: '7H8S3vSshS4', s: 21, e: 25, lvl: 'Beginner', txt: "I want to share a simple idea with all of you today." },
+            { id: '8S0FDjFBj8o', s: 212, e: 217, lvl: 'Advanced', txt: "This is a fundamental shift in how we perceive global economy." }
         ];
 
-        let player, cur, timer;
+        let player, cur, timer, isReady = false;
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                playerVars: { 'autoplay': 0, 'controls': 0, 'modestbranding': 1, 'rel': 0, 'playsinline': 1 },
-                events: { 'onReady': () => loadNew() }
+                playerVars: { 
+                    'autoplay': 0, 
+                    'controls': 0, 
+                    'modestbranding': 1, 
+                    'rel': 0, 
+                    'playsinline': 1,
+                    'enablejsapi': 1
+                },
+                events: { 
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                    'onError': () => { console.log("Error loading, skipping..."); loadNew(); }
+                }
             });
         }
 
+        function onPlayerReady() {
+            isReady = true;
+            loadNew();
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                document.getElementById('loader').style.display = 'none';
+                startWatch();
+            } else {
+                stopWatch();
+            }
+        }
+
         function loadNew() {
-            clearInterval(timer);
+            if (!isReady) return;
+            
+            stopWatch();
             const lvl = document.getElementById('lvl').value;
             const filtered = data.filter(i => i.lvl === lvl);
-            cur = filtered[Math.floor(Math.random() * filtered.length)];
+            
+            // تجنب اختيار نفس الجملة مرتين
+            let next;
+            do {
+                next = filtered[Math.floor(Math.random() * filtered.length)];
+            } while (filtered.length > 1 && cur && next.id === cur.id && next.s === cur.s);
+            
+            cur = next;
 
+            // تحديث الواجهة
             document.getElementById('textArea').classList.add('hidden');
+            document.getElementById('textArea').classList.remove('animate-pulse');
             document.getElementById('viewBtn').innerText = "إظهار النص 📝";
             document.getElementById('phrase').innerText = cur.txt;
+            document.getElementById('loader').style.display = 'flex';
+            document.getElementById('msg').innerText = "Loading Video...";
 
-            player.loadVideoById({ videoId: cur.id, startSeconds: cur.s });
+            player.loadVideoById({
+                videoId: cur.id,
+                startSeconds: cur.s
+            });
+            
             updateSpd();
-            startWatch();
         }
 
         function startWatch() {
+            stopWatch();
+            document.getElementById('msg').innerText = "Playing & Monitoring...";
             timer = setInterval(() => {
-                if (player && player.getCurrentTime() >= cur.e) {
-                    player.pauseVideo();
-                    clearInterval(timer);
+                if (player && player.getCurrentTime) {
+                    const now = player.getCurrentTime();
+                    if (now >= cur.e || now < cur.s - 1) {
+                        player.pauseVideo();
+                        stopWatch();
+                        document.getElementById('msg').innerText = "Paused at End Point";
+                    }
                 }
-            }, 100);
+            }, 50); // فحص سريع جداً لضمان الدقة
+        }
+
+        function stopWatch() {
+            if (timer) clearInterval(timer);
         }
 
         function replay() {
-            clearInterval(timer);
+            if (!cur) return;
+            document.getElementById('loader').style.display = 'flex';
             player.seekTo(cur.s);
             player.playVideo();
-            startWatch();
         }
 
         function updateSpd() {
@@ -120,6 +181,7 @@
             const b = document.getElementById('viewBtn');
             if (t.classList.contains('hidden')) {
                 t.classList.remove('hidden');
+                t.classList.add('animate-pulse');
                 b.innerText = "إخفاء النص 👁️";
             } else {
                 t.classList.add('hidden');
@@ -128,5 +190,4 @@
         }
     </script>
 </body>
-
 </html>
